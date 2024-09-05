@@ -149,16 +149,14 @@ tasks:
   test-coverage-run:
     desc: Run tests with coverage
     cmds:
-      - echo 'Running test coverage...'
       - task: _python
         vars: { COMMAND: "-m coverage run -m pytest tests" }
 
   test-coverage-report:
     desc: Show test coverage report
     cmds:
-      - echo 'Reporting test coverage...'
       - task: _python
-        vars: { COMMAND: "-m coverage report -m" }
+        vars: { COMMAND: "-m coverage report -m --skip-covered --fail-under=100" }
 
   test-coverage-html:
     desc: Show test coverage report in browser
