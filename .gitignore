@@ -6,7 +6,17 @@
 .vscode/
 
 # Dependencies
+.venv/
 node_modules/
+
+# Python cache
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Coverage reports
+/.coverage
+htmlcov/
 
 # Environment
 .env
