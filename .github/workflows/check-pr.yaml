@@ -13,6 +13,7 @@ jobs:
 
     permissions:
       contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -29,6 +30,24 @@ jobs:
         run: |
           task lint
 
-      - name: Test PR
+      - name: Test PR with Coverage
         run: |
-          task test
+          task test-coverage-run
+
+      - name: Report Coverage
+        id: report_coverage
+        uses: ovsds/run-with-output-action@v1
+        with:
+          run: task test-coverage-report
+
+      - name: Post Coverage Report as Comment
+        uses: ovsds/create-or-update-unique-comment-action@v1
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Coverage report:
+            ```
+            ${{ steps.report_coverage.outputs.stdout }}
+            ```
+          unique-body-includes: |
+            Coverage report:
