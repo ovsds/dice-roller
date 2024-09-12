@@ -1,13 +1,12 @@
 import collections
 import dataclasses
 
-import dice_roller.expressions.base as base_expression
 import dice_roller.expressions.dice as dice_expression
 import dice_roller.results as results
 
 
 @dataclasses.dataclass(frozen=True)
-class DiceGroupExpression(base_expression.BaseExpression):
+class DiceGroupExpression:
     dice: dice_expression.DiceExpression
     count: int
     retain_highest: int = 0

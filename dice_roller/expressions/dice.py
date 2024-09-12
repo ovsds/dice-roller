@@ -1,12 +1,11 @@
 import dataclasses
 import random
 
-import dice_roller.expressions.base as dice_base
 import dice_roller.results as results
 
 
 @dataclasses.dataclass(frozen=True)
-class DiceExpression(dice_base.BaseExpression):
+class DiceExpression:
     sides: int
 
     def __post_init__(self):

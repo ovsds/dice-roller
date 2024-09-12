@@ -10,7 +10,7 @@ import dice_roller.parsers.expression.tokens as tokens
 
 @dataclasses.dataclass(frozen=True)
 class OperatorParseOptions:
-    expression_class: type[expressions.BaseOperationExpression]
+    expression_class: type[expressions.OperationExpressionProtocol]
     lesser_precedence_operators: list[tokens.ExpressionTokenTypes] = dataclasses.field(default_factory=list)
 
 
@@ -27,10 +27,10 @@ OPERATOR_TOKENS_MAP: typing.Mapping[tokens.ExpressionTokenTypes, OperatorParseOp
 
 @dataclasses.dataclass(frozen=True)
 class State:
-    operands: list[expressions.BaseExpression] = dataclasses.field(default_factory=list)
+    operands: list[expressions.ExpressionProtocol] = dataclasses.field(default_factory=list)
     operator: tokens.ExpressionTokenTypes | None = None
 
-    def resolve(self) -> expressions.BaseExpression:
+    def resolve(self) -> expressions.ExpressionProtocol:
         if len(self.operands) == 0:
             raise exceptions.UnexpectedEndOfInputError
 
@@ -41,20 +41,20 @@ class State:
         if self.operator is None:
             raise exceptions.UnexpectedStateError("Missing operator token")  # pragma: no cover
 
-        return OPERATOR_TOKENS_MAP[self.operator].expression_class(operands=self.operands)
+        return OPERATOR_TOKENS_MAP[self.operator].expression_class.from_operands(operands=self.operands)
 
 
 class ExpressionParser:
     def __init__(self, lexer: lexers.ExpressionLexerProtocol):
         self.lexer = lexer
 
-    def parse(self) -> expressions.BaseExpression:
+    def parse(self) -> expressions.ExpressionProtocol:
         return self._parse(end_tokens_types=[tokens.ExpressionTokenTypes.END_OF_INPUT])
 
     def _parse(
         self,
         end_tokens_types: list[tokens.ExpressionTokenTypes],
-    ) -> expressions.BaseExpression:
+    ) -> expressions.ExpressionProtocol:
         state = State()
 
         while self.lexer.peek().type not in end_tokens_types:
@@ -129,7 +129,7 @@ class ExpressionParser:
         return State(operands=[operand])
 
 
-def parse_expression(text: str) -> expressions.BaseExpression:
+def parse_expression(text: str) -> expressions.ExpressionProtocol:
     lexer = lexers.ExpressionTextLexer(text=text)
     parser = ExpressionParser(lexer=lexer)
 
