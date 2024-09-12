@@ -13,3 +13,10 @@ def test_roll(fixed_random_seed: None):
     roll = dice.roll()
 
     assert roll == dice_roller.ValueRollResult(value=4)
+
+
+def test_get_histogram():
+    dice = dice_roller.DiceExpression(sides=20)
+    histogram = dice.get_histogram()
+
+    assert histogram == dice_roller.Histogram({i: 1 for i in range(1, 21)})

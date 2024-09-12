@@ -4,11 +4,14 @@ import typing
 
 import typing_extensions
 
+import dice_roller.histograms as histograms
 import dice_roller.results as results
 
 
 class ExpressionProtocol(typing.Protocol):
     def roll(self) -> results.BaseRollResult: ...
+
+    def get_histogram(self) -> histograms.Histogram: ...
 
 
 class OperationExpressionProtocol(ExpressionProtocol, typing.Protocol):
@@ -17,9 +20,7 @@ class OperationExpressionProtocol(ExpressionProtocol, typing.Protocol):
 
 
 @dataclasses.dataclass(frozen=True)
-class BaseExpression(abc.ABC):
-    @abc.abstractmethod
-    def roll(self) -> results.BaseRollResult: ...
+class BaseExpression(abc.ABC): ...
 
 
 @dataclasses.dataclass(frozen=True)

@@ -1,8 +1,12 @@
 import collections
 import dataclasses
+import itertools
 
 import dice_roller.expressions.dice as dice_expression
+import dice_roller.histograms as histograms
 import dice_roller.results as results
+
+GREEDY_HISTOGRAM_LIMIT = 1_000_000
 
 
 @dataclasses.dataclass(frozen=True)
@@ -65,6 +69,25 @@ class DiceGroupExpression:
             result_items.append(results.RollResultItem(result=result, dropped=dropped))
 
         return results.SumRollResult(result_items=result_items)
+
+    def get_histogram(self) -> histograms.Histogram:
+        return self.get_histogram_greedily()
+
+    def get_histogram_greedily(self) -> histograms.Histogram:
+        assert self.dice.sides**self.count < GREEDY_HISTOGRAM_LIMIT, "Too many outcomes to calculate histogram greedily"
+
+        outcomes: dict[int, int] = collections.defaultdict(int)
+
+        for values in itertools.product(*(range(1, self.dice.sides + 1) for _ in range(self.count))):
+            sorted_values = sorted(values)
+            if self.retain_lowest:
+                sorted_values = sorted_values[: self.retain_lowest]
+            if self.retain_highest:
+                sorted_values = sorted_values[-self.retain_highest :]
+
+            outcomes[sum(sorted_values)] += 1
+
+        return histograms.Histogram(outcomes)
 
 
 __all__ = [

@@ -95,3 +95,35 @@ def test_roll_retain_highest(fixed_random_seed: None):
             dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
         ]
     )
+
+
+def test_get_histogram_default():
+    dice_group = dice_roller.DiceGroupExpression(
+        dice=dice_roller.DiceExpression(sides=2),
+        count=3,
+    )
+
+    histogram = dice_group.get_histogram()
+    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({3: 1, 4: 3, 5: 3, 6: 1})
+
+
+def test_get_histogram_retain_lowest():
+    dice_group = dice_roller.DiceGroupExpression(
+        dice=dice_roller.DiceExpression(sides=2),
+        count=3,
+        retain_lowest=2,
+    )
+
+    histogram = dice_group.get_histogram()
+    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({2: 4, 3: 3, 4: 1})
+
+
+def test_get_histogram_retain_highest():
+    dice_group = dice_roller.DiceGroupExpression(
+        dice=dice_roller.DiceExpression(sides=2),
+        count=3,
+        retain_highest=2,
+    )
+
+    histogram = dice_group.get_histogram()
+    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({2: 1, 3: 3, 4: 4})
