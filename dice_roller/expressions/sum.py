@@ -1,6 +1,8 @@
 import dataclasses
+import functools
 
 import dice_roller.expressions.base as dice_base
+import dice_roller.histograms as histograms
 import dice_roller.results as results
 
 
@@ -14,6 +16,12 @@ class SumExpression(dice_base.BaseOperationExpression):
 
         return results.SumRollResult(
             result_items=result_items,
+        )
+
+    def get_histogram(self) -> histograms.Histogram:
+        return functools.reduce(
+            histograms.Histogram.__add__,
+            (expression.get_histogram() for expression in self.operands),
         )
 
 

@@ -1,12 +1,12 @@
 import dataclasses
 import random
 
-import dice_roller.expressions.base as dice_base
+import dice_roller.histograms as histograms
 import dice_roller.results as results
 
 
 @dataclasses.dataclass(frozen=True)
-class DiceExpression(dice_base.BaseExpression):
+class DiceExpression:
     sides: int
 
     def __post_init__(self):
@@ -14,6 +14,9 @@ class DiceExpression(dice_base.BaseExpression):
 
     def roll(self) -> results.ValueRollResult:
         return results.ValueRollResult(value=random.randint(1, self.sides))
+
+    def get_histogram(self) -> histograms.Histogram:
+        return histograms.Histogram({i: 1 for i in range(1, self.sides + 1)})
 
 
 __all__ = [

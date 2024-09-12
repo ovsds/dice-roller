@@ -1,4 +1,9 @@
-from .base import BaseExpression, BaseOperationExpression
+from .base import (
+    BaseExpression,
+    BaseOperationExpression,
+    ExpressionProtocol,
+    OperationExpressionProtocol,
+)
 from .constant import ConstantExpression
 from .dice import DiceExpression
 from .dice_group import DiceGroupExpression
@@ -11,6 +16,8 @@ __all__ = [
     "ConstantExpression",
     "DiceExpression",
     "DiceGroupExpression",
+    "ExpressionProtocol",
     "MultiplicationExpression",
+    "OperationExpressionProtocol",
     "SumExpression",
 ]

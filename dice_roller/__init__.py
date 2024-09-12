@@ -7,6 +7,9 @@ from .expressions import (
     MultiplicationExpression,
     SumExpression,
 )
+from .histograms import (
+    Histogram,
+)
 from .parsers import (
     parse_dice_group,
 )
@@ -23,6 +26,7 @@ __all__ = [
     "ConstantExpression",
     "DiceExpression",
     "DiceGroupExpression",
+    "Histogram",
     "MultiplicationExpression",
     "MultiplicationRollResult",
     "RollResultItem",
