@@ -1,6 +1,8 @@
 import pytest
 
 import dice_roller
+import dice_roller.histograms as histograms
+import dice_roller.results as results
 
 
 def test_init_empty():
@@ -19,11 +21,11 @@ def test_roll():
 
     roll = expression.roll()
 
-    assert roll == dice_roller.MultiplicationRollResult(
+    assert roll == results.MultiplicationRollResult(
         result_items=[
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=2)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=3)),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=2)),
+            results.RollResultItem(result=results.ValueRollResult(value=3)),
         ]
     )
 
@@ -38,4 +40,4 @@ def test_get_histogram():
 
     histogram = expression.get_histogram()
 
-    assert histogram == dice_roller.Histogram({6: 1, 12: 1, 18: 1, 24: 1, 30: 1, 36: 1})
+    assert histogram == histograms.Histogram({6: 1, 12: 1, 18: 1, 24: 1, 30: 1, 36: 1})
