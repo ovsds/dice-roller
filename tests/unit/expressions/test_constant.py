@@ -1,11 +1,13 @@
 import dice_roller
+import dice_roller.histograms as histograms
+import dice_roller.results as results
 
 
 def test_roll():
     dice = dice_roller.ConstantExpression(value=3)
-    assert dice.roll() == dice_roller.ValueRollResult(value=3)
+    assert dice.roll() == results.ValueRollResult(value=3)
 
 
 def test_get_histogram():
     dice = dice_roller.ConstantExpression(value=3)
-    assert dice.get_histogram() == dice_roller.Histogram({3: 1})
+    assert dice.get_histogram() == histograms.Histogram({3: 1})

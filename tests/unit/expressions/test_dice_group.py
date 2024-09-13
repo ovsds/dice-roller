@@ -1,6 +1,8 @@
 import pytest
 
 import dice_roller
+import dice_roller.histograms as histograms
+import dice_roller.results as results
 
 
 def test_init_invalid_count():
@@ -49,12 +51,12 @@ def test_roll_default(fixed_random_seed: None):
 
     roll = dice_group.roll()
 
-    assert roll == dice_roller.SumRollResult(
+    assert roll == results.SumRollResult(
         result_items=[
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
+            results.RollResultItem(result=results.ValueRollResult(value=6)),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=6)),
         ]
     )
 
@@ -68,12 +70,12 @@ def test_roll_retain_lowest(fixed_random_seed: None):
 
     roll = dice_group.roll()
 
-    assert roll == dice_roller.SumRollResult(
+    assert roll == results.SumRollResult(
         result_items=[
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6), dropped=True),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
+            results.RollResultItem(result=results.ValueRollResult(value=6), dropped=True),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=6)),
         ]
     )
 
@@ -87,12 +89,12 @@ def test_roll_retain_highest(fixed_random_seed: None):
 
     roll = dice_group.roll()
 
-    assert roll == dice_roller.SumRollResult(
+    assert roll == results.SumRollResult(
         result_items=[
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1), dropped=True),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=1)),
-            dice_roller.RollResultItem(result=dice_roller.ValueRollResult(value=6)),
+            results.RollResultItem(result=results.ValueRollResult(value=6)),
+            results.RollResultItem(result=results.ValueRollResult(value=1), dropped=True),
+            results.RollResultItem(result=results.ValueRollResult(value=1)),
+            results.RollResultItem(result=results.ValueRollResult(value=6)),
         ]
     )
 
@@ -104,7 +106,7 @@ def test_get_histogram_default():
     )
 
     histogram = dice_group.get_histogram()
-    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({3: 1, 4: 3, 5: 3, 6: 1})
+    assert histogram == dice_group.get_histogram_greedily() == histograms.Histogram({3: 1, 4: 3, 5: 3, 6: 1})
 
 
 def test_get_histogram_retain_lowest():
@@ -115,7 +117,7 @@ def test_get_histogram_retain_lowest():
     )
 
     histogram = dice_group.get_histogram()
-    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({2: 4, 3: 3, 4: 1})
+    assert histogram == dice_group.get_histogram_greedily() == histograms.Histogram({2: 4, 3: 3, 4: 1})
 
 
 def test_get_histogram_retain_highest():
@@ -126,4 +128,4 @@ def test_get_histogram_retain_highest():
     )
 
     histogram = dice_group.get_histogram()
-    assert histogram == dice_group.get_histogram_greedily() == dice_roller.Histogram({2: 1, 3: 3, 4: 4})
+    assert histogram == dice_group.get_histogram_greedily() == histograms.Histogram({2: 1, 3: 3, 4: 4})

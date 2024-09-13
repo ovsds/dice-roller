@@ -6,7 +6,6 @@ from .models import (
     ValueRollResult,
 )
 from .renderer import (
-    BaseRollResultRenderer,
     DetailedRollResult,
     DetailedRollResultRenderer,
     TotalValueRollResultRenderer,
@@ -14,7 +13,6 @@ from .renderer import (
 
 __all__ = [
     "BaseRollResult",
-    "BaseRollResultRenderer",
     "DetailedRollResult",
     "DetailedRollResultRenderer",
     "MultiplicationRollResult",
