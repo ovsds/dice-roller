@@ -43,7 +43,8 @@ def test_init_invalid_drop_retain(
         )
 
 
-def test_roll_default(fixed_random_seed: None):
+@pytest.mark.usefixtures("fixed_random_seed")
+def test_roll_default():
     dice_group = dice_roller.DiceGroupExpression(
         dice=dice_roller.DiceExpression(sides=6),
         count=4,
@@ -61,7 +62,8 @@ def test_roll_default(fixed_random_seed: None):
     )
 
 
-def test_roll_retain_lowest(fixed_random_seed: None):
+@pytest.mark.usefixtures("fixed_random_seed")
+def test_roll_retain_lowest():
     dice_group = dice_roller.DiceGroupExpression(
         dice=dice_roller.DiceExpression(sides=6),
         count=4,
@@ -80,7 +82,8 @@ def test_roll_retain_lowest(fixed_random_seed: None):
     )
 
 
-def test_roll_retain_highest(fixed_random_seed: None):
+@pytest.mark.usefixtures("fixed_random_seed")
+def test_roll_retain_highest():
     dice_group = dice_roller.DiceGroupExpression(
         dice=dice_roller.DiceExpression(sides=6),
         count=4,

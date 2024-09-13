@@ -10,7 +10,8 @@ def test_init_invalid_sides():
         dice_roller.DiceExpression(sides=0)
 
 
-def test_roll(fixed_random_seed: None):
+@pytest.mark.usefixtures("fixed_random_seed")
+def test_roll():
     dice = dice_roller.DiceExpression(sides=20)
     roll = dice.roll()
 
