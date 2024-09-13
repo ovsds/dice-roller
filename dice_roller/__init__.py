@@ -5,6 +5,9 @@ from .expressions import (
     MultiplicationExpression,
     SumExpression,
 )
+from .histograms import (
+    TextHistogramRenderer,
+)
 from .parsers import (
     parse,
 )
@@ -20,6 +23,7 @@ __all__ = [
     "DiceGroupExpression",
     "MultiplicationExpression",
     "SumExpression",
+    "TextHistogramRenderer",
     "TotalValueRollResultRenderer",
     "parse",
 ]
