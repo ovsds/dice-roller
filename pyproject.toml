@@ -39,6 +39,7 @@ repository = "https://github.com/ovsds/dice-roller"
 version = "0.0.1"
 
 [tool.poetry.dependencies]
+click = "^8.1.7"
 python = "~3.12"
 typing-extensions = "^4.12.2"
 
@@ -54,6 +55,9 @@ pytest-mock = "3.14.0"
 ruff = "0.3.4"
 sort-all = "1.2.0"
 toml-sort = "0.23.1"
+
+[tool.poetry.scripts]
+dice-roller = "dice_roller.bin.main:main"
 
 [tool.pyright]
 exclude = [
