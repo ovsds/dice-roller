@@ -2,6 +2,11 @@ version: 3
 
 silent: true
 
+includes:
+  scripts:
+    taskfile: ./.scripts
+    dir: ./.scripts
+
 vars:
   NENV: "node_modules"
   PENV: .venv
@@ -64,7 +69,10 @@ tasks:
       - poetry self update {{.POETRY_TARGET_VERSION}}
 
       - echo 'Installing python dependencies...'
-      - poetry install --with dev
+      - poetry install --with dev --all-extras
+
+      - echo 'Installing .scripts dependencies...'
+      - task: scripts:init
     vars:
       POETRY_TARGET_VERSION:
         sh: cat .poetry-version
@@ -105,6 +113,9 @@ tasks:
       - echo 'Running pyright checks...'
       - task: _pyright
 
+      - echo 'Linting .scripts'
+      - task: scripts:lint
+
   lint-fix:
     desc: Lint fix project
     cmds:
@@ -138,6 +149,9 @@ tasks:
 
       - echo 'Running pyright fixes...'
       - task: _pyright
+
+      - echo 'Fixing .scripts'
+      - task: scripts:lint-fix
 
   test:
     desc: Test project
@@ -189,6 +203,9 @@ tasks:
       - rm -rf .coverage
       - rm -rf htmlcov
 
+      - echo 'Cleaning .scripts dependencies...'
+      - task: scripts:clean
+
   dependencies-update:
     desc: Update dependencies
     cmds:
@@ -203,6 +220,9 @@ tasks:
       - echo 'Updating python dependencies...'
       - poetry update
       - poetry show --outdated
+
+      - echo 'Updating .scripts dependencies...'
+      - task: scripts:dependencies-update
 
   update-from-template:
     desc: Update project from template
@@ -219,3 +239,23 @@ tasks:
         github_owner="ovsds"
     vars:
       TEMPLATE_PATH: '{{.TEMPLATE_PATH | default "https://github.com/ovsds/template-repository"}}'
+
+  login-gh-cli:
+    desc: Login to GitHub CLI
+    cmds:
+      - echo 'Logging to GitHub CLI...'
+      - gh auth login
+        --scopes=read:packages,write:packages
+        --hostname github.com
+        --git-protocol https
+        --web
+
+  login-vault:
+    desc: Login to vault
+    cmds:
+      - echo 'Logging vault with GitHub token...'
+      - vault login
+        -method=github
+        -address=https://vault.ovsds.ru
+        -no-print
+        token=$(gh auth token)
