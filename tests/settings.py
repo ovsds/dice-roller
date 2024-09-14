@@ -6,6 +6,7 @@ import pydantic_settings
 class Environment(enum.Enum):
     development = "DEV"
     ci = "CI"
+    container = "CONTAINER"
 
 
 class PytestSettings(pydantic_settings.BaseSettings):

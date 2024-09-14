@@ -8,7 +8,7 @@ import tests.settings as tests_settings
 
 @pytest.fixture(name="skip_plotly")
 def skip_plotly_fixture(settings: tests_settings.PytestSettings):
-    if settings.environment == tests_settings.Environment.ci:
+    if settings.environment != tests_settings.Environment.development:
         pytest.skip("Skipping Plotly tests")
 
 

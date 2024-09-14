@@ -16,6 +16,8 @@ vars:
   PYTHON_FILES:
     sh: find {{.SOURCE_FOLDERS}} -name '*.py' | tr '\n' ' '
 
+  IMAGE_NAME: dice-roller
+
 tasks:
   _deptry:
     internal: true
@@ -153,12 +155,41 @@ tasks:
       - echo 'Fixing .scripts'
       - task: scripts:lint-fix
 
+  image-build:
+    desc: Build image target for local usage
+    requires:
+      vars:
+        - TARGET
+    cmds:
+      - echo 'Building image {{.TARGET}} target...'
+      - docker build
+        --load
+        --build-arg BASE_BUILDER_IMAGE=python:{{.PYTHON_VERSION}}
+        --build-arg BASE_RUNTIME_IMAGE=python:{{.PYTHON_VERSION}}-slim
+        --tag {{.IMAGE_NAME}}:{{.TARGET}}
+        {{ if .TAG }}--tag {{.TAG}}{{ end }}
+        --target {{.TARGET}}
+        .
+    vars:
+      PYTHON_VERSION:
+        sh: cat .python-version
+
   test:
     desc: Test project
     cmds:
       - echo 'Running tests...'
       - task: _python
         vars: { COMMAND: "-m pytest tests" }
+
+  test-container:
+    desc: Run tests in container
+    cmds:
+      - task: image-build
+        vars: { TARGET: tests }
+
+      - echo 'Running tests...'
+      - docker run
+        {{.IMAGE_NAME}}:tests
 
   test-coverage-run:
     desc: Run tests with coverage
@@ -224,6 +255,24 @@ tasks:
       - echo 'Updating .scripts dependencies...'
       - task: scripts:dependencies-update
 
+  dev-server-start:
+    desc: Start development application
+    cmds:
+      - echo 'Starting server...'
+      - "{{.PENV}}/bin/dice-roller {{.CLI_ARGS}}"
+
+  dev-server-container-start:
+    desc: Start development application in container
+    cmds:
+      - task: image-build
+        vars: { TARGET: runtime }
+
+      - echo 'Running container...'
+      - docker run
+        --env TELEGRAM_APP_TOKEN
+        {{.IMAGE_NAME}}:runtime
+        {{.CLI_ARGS}}
+
   update-from-template:
     desc: Update project from template
     cmds:
@@ -259,3 +308,25 @@ tasks:
         -address=https://vault.ovsds.ru
         -no-print
         token=$(gh auth token)
+
+  ci-image-build:
+    desc: Build image target for CI usage
+    requires:
+      vars:
+        - IMAGE_TAG
+        - IMAGE_REGISTRY
+    cmds:
+      - task: image-build
+        vars:
+          TARGET: runtime
+          TAG: "{{.IMAGE_REGISTRY}}/{{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
+
+  ci-image-push:
+    desc: Push image to registry for CI usage
+    requires:
+      vars:
+        - IMAGE_TAG
+        - IMAGE_REGISTRY
+    cmds:
+      - echo 'Uploading backend image...'
+      - docker push {{.IMAGE_REGISTRY}}/{{.IMAGE_NAME}}:{{.IMAGE_TAG}}
