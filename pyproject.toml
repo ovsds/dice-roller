@@ -42,14 +42,17 @@ repository = "https://github.com/ovsds/dice-roller"
 version = "0.0.1"
 
 [tool.poetry.dependencies]
+aiogram = {optional = true, version = "^3.13.0"}
 click = "^8.1.7"
 kaleido = {optional = true, version = "0.2.1"}
 plotly = {optional = true, version = "^5.24.1"}
+pydantic-settings = {optional = true, version = "^2.5.2"}
 python = "~3.12"
 typing-extensions = "^4.12.2"
 
 [tool.poetry.extras]
 plotly = ["kaleido", "plotly"]
+telegram = ["aiogram", "kaleido", "plotly", "pydantic-settings"]
 
 [tool.poetry.group.dev]
 optional = true
