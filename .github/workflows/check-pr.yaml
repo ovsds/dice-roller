@@ -33,6 +33,8 @@ jobs:
       - name: Test PR with Coverage
         run: |
           task test-coverage-run
+        env:
+          TESTS_ENVIRONMENT: CI
 
       - name: Report Coverage
         id: report_coverage

@@ -20,6 +20,9 @@ exclude_lines = [
 [tool.coverage.run]
 include = ["dice_roller/*"]
 
+[tool.deptry.per_rule_ignores]
+DEP002 = ["kaleido"]
+
 [tool.isort]
 known_first_party = ["dice_roller", "tests"]
 line_length = 120
@@ -40,8 +43,13 @@ version = "0.0.1"
 
 [tool.poetry.dependencies]
 click = "^8.1.7"
+kaleido = {optional = true, version = "0.2.1"}
+plotly = {optional = true, version = "^5.24.1"}
 python = "~3.12"
 typing-extensions = "^4.12.2"
+
+[tool.poetry.extras]
+plotly = ["kaleido", "plotly"]
 
 [tool.poetry.group.dev]
 optional = true
@@ -50,6 +58,7 @@ optional = true
 black = "24.3.0"
 coverage = "7.4.4"
 deptry = "^0.18.0"
+pydantic-settings = "^2.5.2"
 pytest = "8.1.1"
 pytest-mock = "3.14.0"
 ruff = "0.3.4"
