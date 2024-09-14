@@ -19,7 +19,7 @@ class DetailedRollResult:
 
 
 class DetailedRollResultRenderer(base_result_renderer.BaseRollResultRenderer[DetailedRollResult]):
-    def render_value_roll(self, roll: result_models.ValueRollResult) -> DetailedRollResult:
+    def _render_value(self, roll: result_models.ValueRollResult) -> DetailedRollResult:
         return DetailedRollResult(value=roll.value, details=str(roll.value))
 
     def _render_collection_roll(
@@ -46,7 +46,7 @@ class DetailedRollResultRenderer(base_result_renderer.BaseRollResultRenderer[Det
 
         return DetailedRollResult(value=value, details=result_details)
 
-    def render_sum_roll(self, roll: result_models.SumRollResult) -> DetailedRollResult:
+    def _render_sum(self, roll: result_models.SumRollResult) -> DetailedRollResult:
         return self._render_collection_roll(
             roll=roll,
             details_separator="+",
@@ -54,7 +54,7 @@ class DetailedRollResultRenderer(base_result_renderer.BaseRollResultRenderer[Det
             start_value=0,
         )
 
-    def render_multiplication_roll(self, roll: result_models.MultiplicationRollResult) -> DetailedRollResult:
+    def _render_multiplication(self, roll: result_models.MultiplicationRollResult) -> DetailedRollResult:
         return self._render_collection_roll(
             roll=roll,
             details_separator="*",
