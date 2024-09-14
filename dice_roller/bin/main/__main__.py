@@ -1,3 +1,5 @@
+import asyncio
+
 import click
 
 import dice_roller
@@ -35,6 +37,18 @@ def histogram(raw_expression: str):
     text_histogram = renderer.render(histogram)
 
     click.echo(text_histogram)
+
+
+@main.command(name="telegram")
+def telegram():
+    click.echo("Starting Telegram bot...", err=True)
+
+    import dice_roller.telegram as telegram
+
+    settings = telegram.TelegramAppSettings()
+    app = telegram.TelegramApp.from_settings(settings)
+
+    asyncio.run(app.start())
 
 
 if __name__ == "__main__":
