@@ -48,7 +48,7 @@ class DiceGroupParser:
         self._advance()
         return True
 
-    def parse(self) -> expressions.ExpressionProtocol:
+    def parse(self) -> expressions.SingleExpressionProtocol:
         self._advance()
 
         count = self._parse_optional_number()
@@ -86,7 +86,7 @@ class DiceGroupParser:
         )
 
 
-def parse_dice_group(text: str) -> expressions.ExpressionProtocol:
+def parse_dice_group(text: str) -> expressions.SingleExpressionProtocol:
     lexer = lexers.DiceGroupTextLexer(text=text)
     parser = DiceGroupParser(lexer=lexer)
 

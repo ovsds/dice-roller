@@ -9,6 +9,8 @@ class ExpressionTokenTypes(enum.Enum):
     PLUS = enum.auto()
     MULTIPLY = enum.auto()
     DICE_GROUP = enum.auto()
+    NUMBER = enum.auto()
+    REPEAT = enum.auto()
 
 
 @dataclasses.dataclass(frozen=True)

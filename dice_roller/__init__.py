@@ -3,6 +3,7 @@ from .expressions import (
     DiceExpression,
     DiceGroupExpression,
     MultiplicationExpression,
+    RepeatedExpression,
     SumExpression,
 )
 from .histograms import (
@@ -24,6 +25,7 @@ __all__ = [
     "DiceGroupExpression",
     "MultiplicationExpression",
     "PlotlyHistogramRenderer",
+    "RepeatedExpression",
     "SumExpression",
     "TextHistogramRenderer",
     "TotalValueResultRenderer",

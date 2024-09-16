@@ -35,7 +35,7 @@ class RollService:
         expression = dice_roller.parse(raw_expression)
         result = expression.roll()
         detailed_result = self.renderer.render(result)
-        result_items = (f"{item.value}={item.details}" for item in detailed_result)
+        result_items = (f"{item.details}={item.value}" for item in detailed_result)
         return "\n".join(result_items)
 
 
