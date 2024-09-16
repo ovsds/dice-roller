@@ -7,26 +7,20 @@ import dice_roller.results.renderer.base as base_result_renderer
 STRIKETHROUGH = "\u0336"
 
 
-def make_strikethrough(text: str) -> str:
-    # add STRIKETHROUGH after each character
-    return STRIKETHROUGH.join(text) + STRIKETHROUGH
-
-
 @dataclasses.dataclass(frozen=True)
 class DetailedResult:
     value: int
     details: str
 
 
-class DetailedResultRenderer(base_result_renderer.BaseResultRenderer[DetailedResult, list[DetailedResult]]):
-    def render(self, roll: result_models.BaseResult) -> list[DetailedResult]:
-        if isinstance(roll, result_models.MultiResult):
-            return [self.render_single(item) for item in roll.results]
+@dataclasses.dataclass(frozen=True)
+class DetailedResultRenderer(base_result_renderer.BaseListResultRenderer[DetailedResult]):
 
-        if isinstance(roll, result_models.BaseSingleResult):
-            return [self.render_single(roll)]
+    def _format_details(self, details: str, dropped: bool) -> str:
+        if dropped:
+            return STRIKETHROUGH.join(details) + STRIKETHROUGH
 
-        return [self._unsupported(roll)]  # pragma: no cover
+        return details
 
     def _render_value(self, roll: result_models.ValueResult) -> DetailedResult:
         return DetailedResult(value=roll.value, details=str(roll.value))
@@ -42,13 +36,12 @@ class DetailedResultRenderer(base_result_renderer.BaseResultRenderer[DetailedRes
         details: list[str] = []
 
         for item in roll.result_items:
-            rendered_item = self.render_single(item.result)
+            rendered_item = self._render_single(item.result)
 
-            if item.dropped:
-                details.append(make_strikethrough(rendered_item.details))
-            else:
+            if not item.dropped:
                 value = value_operator(value, rendered_item.value)
-                details.append(rendered_item.details)
+
+            details.append(self._format_details(rendered_item.details, item.dropped))
 
         result_details = details_separator.join(details)
         result_details = f"({result_details})"
