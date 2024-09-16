@@ -24,13 +24,18 @@ OPERATOR_TOKENS_MAP: typing.Mapping[tokens.ExpressionTokenTypes, OperatorParseOp
     ),
 }
 
+DICE_GROUP_TOKENS = {
+    tokens.ExpressionTokenTypes.DICE_GROUP,
+    tokens.ExpressionTokenTypes.NUMBER,
+}
+
 
 @dataclasses.dataclass(frozen=True)
 class State:
-    operands: list[expressions.ExpressionProtocol] = dataclasses.field(default_factory=list)
+    operands: list[expressions.SingleExpressionProtocol] = dataclasses.field(default_factory=list)
     operator: tokens.ExpressionTokenTypes | None = None
 
-    def resolve(self) -> expressions.ExpressionProtocol:
+    def resolve(self) -> expressions.SingleExpressionProtocol:
         if len(self.operands) == 0:
             raise exceptions.UnexpectedEndOfInputError
 
@@ -49,12 +54,29 @@ class ExpressionParser:
         self.lexer = lexer
 
     def parse(self) -> expressions.ExpressionProtocol:
-        return self._parse(end_tokens_types=[tokens.ExpressionTokenTypes.END_OF_INPUT])
+        result = self._parse_expression(
+            end_tokens_types=[
+                tokens.ExpressionTokenTypes.END_OF_INPUT,
+                tokens.ExpressionTokenTypes.REPEAT,
+            ],
+        )
+        if self.lexer.peek().type == tokens.ExpressionTokenTypes.END_OF_INPUT:
+            return result
 
-    def _parse(
+        if self.lexer.peek().type == tokens.ExpressionTokenTypes.REPEAT:
+            self.lexer.advance()
+            if self.lexer.peek().type != tokens.ExpressionTokenTypes.NUMBER:
+                raise exceptions.UnexpectedTokenError("Expected number after repeat token")
+            repeat_token = self.lexer.advance()
+            repeat_count = int(repeat_token.value)
+            return expressions.RepeatedExpression(expression=result, count=repeat_count)
+
+        raise exceptions.UnexpectedTokenError(f"Unexpected token: {self.lexer.peek()}")  # pragma: no cover
+
+    def _parse_expression(
         self,
         end_tokens_types: list[tokens.ExpressionTokenTypes],
-    ) -> expressions.ExpressionProtocol:
+    ) -> expressions.SingleExpressionProtocol:
         state = State()
 
         while self.lexer.peek().type not in end_tokens_types:
@@ -64,8 +86,10 @@ class ExpressionParser:
                 state = self._parse_operator(state, end_tokens_types)
             elif current_token.type == tokens.ExpressionTokenTypes.LEFT_PARENTHESES:
                 state = self._parse_parentheses(state)
-            elif current_token.type == tokens.ExpressionTokenTypes.DICE_GROUP:
+            elif current_token.type in DICE_GROUP_TOKENS:
                 state = self._parse_dice_group(state)
+            else:
+                raise exceptions.UnexpectedTokenError(f"Unexpected token: {current_token}")  # pragma: no cover
 
         return state.resolve()
 
@@ -92,7 +116,7 @@ class ExpressionParser:
             extended_end_tokens_types.append(operator)
             extended_end_tokens_types.extend(OPERATOR_TOKENS_MAP[operator].lesser_precedence_operators)
             operands = state.operands.copy()
-            operands.append(self._parse(end_tokens_types=extended_end_tokens_types))
+            operands.append(self._parse_expression(end_tokens_types=extended_end_tokens_types))
 
             return State(operator=operator, operands=operands)
 
@@ -102,7 +126,7 @@ class ExpressionParser:
         token = self.lexer.advance()
         assert token.type == tokens.ExpressionTokenTypes.LEFT_PARENTHESES
 
-        operand = self._parse(end_tokens_types=[tokens.ExpressionTokenTypes.RIGHT_PARENTHESES])
+        operand = self._parse_expression(end_tokens_types=[tokens.ExpressionTokenTypes.RIGHT_PARENTHESES])
 
         token = self.lexer.advance()
         assert token.type == tokens.ExpressionTokenTypes.RIGHT_PARENTHESES
@@ -120,7 +144,7 @@ class ExpressionParser:
             raise exceptions.UnexpectedStateError("Operator is not None when parsing dice group")  # pragma: no cover
 
         token = self.lexer.advance()
-        assert token.type == tokens.ExpressionTokenTypes.DICE_GROUP
+        assert token.type in DICE_GROUP_TOKENS
 
         lexer = dice_group_parsers.DiceGroupTextLexer(text=token.value)
         parser = dice_group_parsers.DiceGroupParser(lexer=lexer)

@@ -22,6 +22,7 @@ class ExpressionTextLexer:
         ")": tokens.ExpressionTokenTypes.RIGHT_PARENTHESES,
         "+": tokens.ExpressionTokenTypes.PLUS,
         "*": tokens.ExpressionTokenTypes.MULTIPLY,
+        "x": tokens.ExpressionTokenTypes.REPEAT,
     }
 
     def __init__(self, text: str):
@@ -43,6 +44,13 @@ class ExpressionTextLexer:
         self._next_token = None
         return next_token
 
+    def _get_token_from_chars(self, chars: list[str]) -> tokens.ExpressionToken:
+        value = "".join(chars)
+        if value.isdigit():
+            return tokens.ExpressionToken(value=value, type=tokens.ExpressionTokenTypes.NUMBER)
+
+        return tokens.ExpressionToken(value=value, type=tokens.ExpressionTokenTypes.DICE_GROUP)
+
     def _get_next(self) -> tokens.ExpressionToken:
         current_token_chars: list[str] = []
 
@@ -59,19 +67,13 @@ class ExpressionTextLexer:
                 continue
 
             if current_token_chars:
-                return tokens.ExpressionToken(
-                    value="".join(current_token_chars),
-                    type=tokens.ExpressionTokenTypes.DICE_GROUP,
-                )
+                return self._get_token_from_chars(current_token_chars)
 
             self.index += 1
             return tokens.ExpressionToken(value=current_char, type=self.STATIC_TOKENS_MAP[current_char])
 
         if current_token_chars:
-            return tokens.ExpressionToken(
-                value="".join(current_token_chars),
-                type=tokens.ExpressionTokenTypes.DICE_GROUP,
-            )
+            return self._get_token_from_chars(current_token_chars)
 
         return tokens.ExpressionToken(value="", type=tokens.ExpressionTokenTypes.END_OF_INPUT)
 

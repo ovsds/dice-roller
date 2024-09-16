@@ -22,7 +22,7 @@ def test_ignored_characters(character: str):
     assert lexer_to_list(lexer) == [
         expression_parsers.tokens.ExpressionToken(
             value="42",
-            type=expression_parsers.tokens.ExpressionTokenTypes.DICE_GROUP,
+            type=expression_parsers.tokens.ExpressionTokenTypes.NUMBER,
         )
     ]
 
@@ -34,8 +34,9 @@ def test_ignored_characters(character: str):
         (")", expression_parsers.tokens.ExpressionTokenTypes.RIGHT_PARENTHESES),
         ("+", expression_parsers.tokens.ExpressionTokenTypes.PLUS),
         ("*", expression_parsers.tokens.ExpressionTokenTypes.MULTIPLY),
+        ("x", expression_parsers.tokens.ExpressionTokenTypes.REPEAT),
     ],
-    ids=["left_parentheses", "right_parentheses", "plus", "multiply"],
+    ids=["left_parentheses", "right_parentheses", "plus", "multiply", "repeat"],
 )
 def test_static_tokens(value: str, token_type: expression_parsers.tokens.ExpressionTokenTypes):
     lexer = expression_parsers.ExpressionTextLexer(text=f"4{value}2")
@@ -43,7 +44,7 @@ def test_static_tokens(value: str, token_type: expression_parsers.tokens.Express
     assert lexer_to_list(lexer) == [
         expression_parsers.tokens.ExpressionToken(
             value="4",
-            type=expression_parsers.tokens.ExpressionTokenTypes.DICE_GROUP,
+            type=expression_parsers.tokens.ExpressionTokenTypes.NUMBER,
         ),
         expression_parsers.tokens.ExpressionToken(
             value=value,
@@ -51,7 +52,7 @@ def test_static_tokens(value: str, token_type: expression_parsers.tokens.Express
         ),
         expression_parsers.tokens.ExpressionToken(
             value="2",
-            type=expression_parsers.tokens.ExpressionTokenTypes.DICE_GROUP,
+            type=expression_parsers.tokens.ExpressionTokenTypes.NUMBER,
         ),
     ]
 
@@ -71,5 +72,24 @@ def test_dice_group():
         expression_parsers.tokens.ExpressionToken(
             value="abc",
             type=expression_parsers.tokens.ExpressionTokenTypes.DICE_GROUP,
+        ),
+    ]
+
+
+def test_number():
+    lexer = expression_parsers.ExpressionTextLexer(text="4+2")
+
+    assert lexer_to_list(lexer) == [
+        expression_parsers.tokens.ExpressionToken(
+            value="4",
+            type=expression_parsers.tokens.ExpressionTokenTypes.NUMBER,
+        ),
+        expression_parsers.tokens.ExpressionToken(
+            value="+",
+            type=expression_parsers.tokens.ExpressionTokenTypes.PLUS,
+        ),
+        expression_parsers.tokens.ExpressionToken(
+            value="2",
+            type=expression_parsers.tokens.ExpressionTokenTypes.NUMBER,
         ),
     ]

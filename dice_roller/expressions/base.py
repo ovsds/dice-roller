@@ -9,14 +9,18 @@ import dice_roller.results as results
 
 
 class ExpressionProtocol(typing.Protocol):
-    def roll(self) -> results.BaseSingleResult: ...
+    def roll(self) -> results.BaseResult: ...
 
     def get_histogram(self) -> histograms.Histogram: ...
 
 
-class OperationExpressionProtocol(ExpressionProtocol, typing.Protocol):
+class SingleExpressionProtocol(ExpressionProtocol, typing.Protocol):
+    def roll(self) -> results.BaseSingleResult: ...
+
+
+class OperationExpressionProtocol(SingleExpressionProtocol, typing.Protocol):
     @classmethod
-    def from_operands(cls, operands: typing.Sequence[ExpressionProtocol]) -> typing_extensions.Self: ...
+    def from_operands(cls, operands: typing.Sequence[SingleExpressionProtocol]) -> typing_extensions.Self: ...
 
 
 @dataclasses.dataclass(frozen=True)
@@ -25,10 +29,10 @@ class BaseExpression(abc.ABC): ...
 
 @dataclasses.dataclass(frozen=True)
 class BaseOperationExpression(BaseExpression, abc.ABC):
-    operands: typing.Sequence[ExpressionProtocol]
+    operands: typing.Sequence[SingleExpressionProtocol]
 
     @classmethod
-    def from_operands(cls, operands: typing.Sequence[ExpressionProtocol]) -> typing_extensions.Self:
+    def from_operands(cls, operands: typing.Sequence[SingleExpressionProtocol]) -> typing_extensions.Self:
         return cls(operands=operands)
 
 
@@ -37,4 +41,5 @@ __all__ = [
     "BaseOperationExpression",
     "ExpressionProtocol",
     "OperationExpressionProtocol",
+    "SingleExpressionProtocol",
 ]

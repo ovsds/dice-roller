@@ -31,6 +31,55 @@ class ExpressionListLexer:
         return token
 
 
+def test_repeated_expression():
+    lexer = ExpressionListLexer(
+        tokens_list=[
+            expression_parsers.ExpressionToken(
+                value="1d8",
+                type=expression_parsers.ExpressionTokenTypes.DICE_GROUP,
+            ),
+            expression_parsers.ExpressionToken(
+                value="x",
+                type=expression_parsers.ExpressionTokenTypes.REPEAT,
+            ),
+            expression_parsers.ExpressionToken(
+                value="3",
+                type=expression_parsers.ExpressionTokenTypes.NUMBER,
+            ),
+        ]
+    )
+    parser = expression_parsers.ExpressionParser(lexer=lexer)
+
+    expression = parser.parse()
+    assert expression == dice_roller.RepeatedExpression(
+        count=3,
+        expression=dice_roller.DiceGroupExpression(count=1, dice=dice_roller.DiceExpression(sides=8)),
+    )
+
+
+def test_incorrect_repeated_expression():
+    lexer = ExpressionListLexer(
+        tokens_list=[
+            expression_parsers.ExpressionToken(
+                value="1d8",
+                type=expression_parsers.ExpressionTokenTypes.DICE_GROUP,
+            ),
+            expression_parsers.ExpressionToken(
+                value="x",
+                type=expression_parsers.ExpressionTokenTypes.REPEAT,
+            ),
+            expression_parsers.ExpressionToken(
+                value="d8",
+                type=expression_parsers.ExpressionTokenTypes.DICE_GROUP,
+            ),
+        ]
+    )
+    parser = expression_parsers.ExpressionParser(lexer=lexer)
+
+    with pytest.raises(parsers_exceptions.UnexpectedTokenError):
+        parser.parse()
+
+
 def test_dice_group():
     lexer = ExpressionListLexer(
         tokens_list=[
