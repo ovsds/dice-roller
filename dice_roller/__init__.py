@@ -13,19 +13,19 @@ from .parsers import (
     parse,
 )
 from .results import (
-    DetailedRollResultRenderer,
-    TotalValueRollResultRenderer,
+    DetailedResultRenderer,
+    TotalValueResultRenderer,
 )
 
 __all__ = [
     "ConstantExpression",
-    "DetailedRollResultRenderer",
+    "DetailedResultRenderer",
     "DiceExpression",
     "DiceGroupExpression",
     "MultiplicationExpression",
     "PlotlyHistogramRenderer",
     "SumExpression",
     "TextHistogramRenderer",
-    "TotalValueRollResultRenderer",
+    "TotalValueResultRenderer",
     "parse",
 ]

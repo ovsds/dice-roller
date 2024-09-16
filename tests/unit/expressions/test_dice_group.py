@@ -52,12 +52,12 @@ def test_roll_default():
 
     roll = dice_group.roll()
 
-    assert roll == results.SumRollResult(
+    assert roll == results.SumResult(
         result_items=[
-            results.RollResultItem(result=results.ValueRollResult(value=6)),
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=6)),
+            results.ResultItem(result=results.ValueResult(value=6)),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=6)),
         ]
     )
 
@@ -72,12 +72,12 @@ def test_roll_retain_lowest():
 
     roll = dice_group.roll()
 
-    assert roll == results.SumRollResult(
+    assert roll == results.SumResult(
         result_items=[
-            results.RollResultItem(result=results.ValueRollResult(value=6), dropped=True),
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=6)),
+            results.ResultItem(result=results.ValueResult(value=6), dropped=True),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=6)),
         ]
     )
 
@@ -92,12 +92,12 @@ def test_roll_retain_highest():
 
     roll = dice_group.roll()
 
-    assert roll == results.SumRollResult(
+    assert roll == results.SumResult(
         result_items=[
-            results.RollResultItem(result=results.ValueRollResult(value=6)),
-            results.RollResultItem(result=results.ValueRollResult(value=1), dropped=True),
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=6)),
+            results.ResultItem(result=results.ValueResult(value=6)),
+            results.ResultItem(result=results.ValueResult(value=1), dropped=True),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=6)),
         ]
     )
 

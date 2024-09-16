@@ -18,7 +18,7 @@ def roll(raw_expression: str):
     expression = dice_roller.parse(raw_expression)
     result = expression.roll()
 
-    detailed_renderer = dice_roller.DetailedRollResultRenderer()
+    detailed_renderer = dice_roller.DetailedResultRenderer()
     detailed_result = detailed_renderer.render(result)
 
     for item in detailed_result:

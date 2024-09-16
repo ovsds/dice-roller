@@ -3,53 +3,53 @@ import dataclasses
 import typing
 
 
-class BaseRollResult: ...
+class BaseResult: ...
 
 
-class BaseSingleRollResult(BaseRollResult): ...
+class BaseSingleResult(BaseResult): ...
 
 
 @dataclasses.dataclass(frozen=True)
-class ValueRollResult(BaseSingleRollResult):
+class ValueResult(BaseSingleResult):
     value: int
 
 
 @dataclasses.dataclass(frozen=True)
-class RollResultItem:
-    result: BaseSingleRollResult
+class ResultItem:
+    result: BaseSingleResult
     dropped: bool = False
 
     def __post_init__(self):
         if self.dropped:
-            assert isinstance(self.result, ValueRollResult), "Dropped result must be a value"
+            assert isinstance(self.result, ValueResult), "Dropped result must be a value"
 
 
 @dataclasses.dataclass(frozen=True)
-class BaseCollectionRollResult(abc.ABC, BaseSingleRollResult):
-    result_items: typing.Sequence[RollResultItem]
+class BaseCollectionResult(abc.ABC, BaseSingleResult):
+    result_items: typing.Sequence[ResultItem]
 
     def __post_init__(self):
         assert any(not roll.dropped for roll in self.result_items), "At least one non-dropped results is required"
 
 
-class SumRollResult(BaseCollectionRollResult): ...
+class SumResult(BaseCollectionResult): ...
 
 
-class MultiplicationRollResult(BaseCollectionRollResult): ...
+class MultiplicationResult(BaseCollectionResult): ...
 
 
 @dataclasses.dataclass(frozen=True)
-class MultiRollResult(BaseRollResult):
-    results: typing.Sequence[BaseSingleRollResult]
+class MultiResult(BaseResult):
+    results: typing.Sequence[BaseSingleResult]
 
 
 __all__ = [
-    "BaseCollectionRollResult",
-    "BaseRollResult",
-    "BaseSingleRollResult",
-    "MultiRollResult",
-    "MultiplicationRollResult",
-    "RollResultItem",
-    "SumRollResult",
-    "ValueRollResult",
+    "BaseCollectionResult",
+    "BaseResult",
+    "BaseSingleResult",
+    "MultiResult",
+    "MultiplicationResult",
+    "ResultItem",
+    "SumResult",
+    "ValueResult",
 ]

@@ -29,7 +29,7 @@ class MessageHandlerProtocol(typing.Protocol):
 
 @dataclasses.dataclass(frozen=True)
 class RollService:
-    renderer: dice_roller.DetailedRollResultRenderer
+    renderer: dice_roller.DetailedResultRenderer
 
     def roll(self, raw_expression: str) -> str:
         expression = dice_roller.parse(raw_expression)
@@ -114,7 +114,7 @@ class TelegramApp:
         aiogram_bot = aiogram.Bot(token=settings.token)
         aiogram_dispatcher = aiogram.Dispatcher()
 
-        roll_service = RollService(renderer=dice_roller.DetailedRollResultRenderer())
+        roll_service = RollService(renderer=dice_roller.DetailedResultRenderer())
         histogram_service = HistogramService(renderer=dice_roller.PlotlyHistogramRenderer())
 
         message_handler = MessageHandler(roll_service=roll_service, histogram_service=histogram_service)

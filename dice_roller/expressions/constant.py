@@ -8,8 +8,8 @@ import dice_roller.results as results
 class ConstantExpression:
     value: int
 
-    def roll(self) -> results.ValueRollResult:
-        return results.ValueRollResult(self.value)
+    def roll(self) -> results.ValueResult:
+        return results.ValueResult(self.value)
 
     def get_histogram(self) -> histograms.Histogram:
         return histograms.Histogram({self.value: 1})

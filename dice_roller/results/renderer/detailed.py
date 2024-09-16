@@ -13,33 +13,31 @@ def make_strikethrough(text: str) -> str:
 
 
 @dataclasses.dataclass(frozen=True)
-class DetailedRollResult:
+class DetailedResult:
     value: int
     details: str
 
 
-class DetailedRollResultRenderer(
-    base_result_renderer.BaseRollResultRenderer[DetailedRollResult, list[DetailedRollResult]]
-):
-    def render(self, roll: result_models.BaseRollResult) -> list[DetailedRollResult]:
-        if isinstance(roll, result_models.MultiRollResult):
+class DetailedResultRenderer(base_result_renderer.BaseResultRenderer[DetailedResult, list[DetailedResult]]):
+    def render(self, roll: result_models.BaseResult) -> list[DetailedResult]:
+        if isinstance(roll, result_models.MultiResult):
             return [self.render_single(item) for item in roll.results]
 
-        if isinstance(roll, result_models.BaseSingleRollResult):
+        if isinstance(roll, result_models.BaseSingleResult):
             return [self.render_single(roll)]
 
         return [self._unsupported(roll)]  # pragma: no cover
 
-    def _render_value(self, roll: result_models.ValueRollResult) -> DetailedRollResult:
-        return DetailedRollResult(value=roll.value, details=str(roll.value))
+    def _render_value(self, roll: result_models.ValueResult) -> DetailedResult:
+        return DetailedResult(value=roll.value, details=str(roll.value))
 
     def _render_collection_roll(
         self,
-        roll: result_models.BaseCollectionRollResult,
+        roll: result_models.BaseCollectionResult,
         details_separator: str,
         value_operator: typing.Callable[[int, int], int],
         start_value: int,
-    ) -> DetailedRollResult:
+    ) -> DetailedResult:
         value = start_value
         details: list[str] = []
 
@@ -55,9 +53,9 @@ class DetailedRollResultRenderer(
         result_details = details_separator.join(details)
         result_details = f"({result_details})"
 
-        return DetailedRollResult(value=value, details=result_details)
+        return DetailedResult(value=value, details=result_details)
 
-    def _render_sum(self, roll: result_models.SumRollResult) -> DetailedRollResult:
+    def _render_sum(self, roll: result_models.SumResult) -> DetailedResult:
         return self._render_collection_roll(
             roll=roll,
             details_separator="+",
@@ -65,7 +63,7 @@ class DetailedRollResultRenderer(
             start_value=0,
         )
 
-    def _render_multiplication(self, roll: result_models.MultiplicationRollResult) -> DetailedRollResult:
+    def _render_multiplication(self, roll: result_models.MultiplicationResult) -> DetailedResult:
         return self._render_collection_roll(
             roll=roll,
             details_separator="*",
@@ -75,6 +73,6 @@ class DetailedRollResultRenderer(
 
 
 __all__ = [
-    "DetailedRollResult",
-    "DetailedRollResultRenderer",
+    "DetailedResult",
+    "DetailedResultRenderer",
 ]
