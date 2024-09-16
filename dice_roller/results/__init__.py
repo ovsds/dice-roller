@@ -10,6 +10,7 @@ from .models import (
 from .renderer import (
     DetailedResult,
     DetailedResultRenderer,
+    ResultRendererProtocol,
     TotalValueResultRenderer,
 )
 
@@ -21,6 +22,7 @@ __all__ = [
     "MultiResult",
     "MultiplicationResult",
     "ResultItem",
+    "ResultRendererProtocol",
     "SumResult",
     "TotalValueResultRenderer",
     "ValueResult",

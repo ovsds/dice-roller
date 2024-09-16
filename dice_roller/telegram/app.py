@@ -8,6 +8,7 @@ import pydantic_settings
 import typing_extensions
 
 import dice_roller
+import dice_roller.results as results
 
 logger = logging.getLogger(__name__)
 
@@ -27,16 +28,32 @@ class MessageHandlerProtocol(typing.Protocol):
     async def process(self, message: aiogram.types.Message): ...
 
 
+class TelegramDetailedResultRenderer(results.DetailedResultRenderer):
+    def _format_details(self, details: str, dropped: bool) -> str:
+        if dropped:
+            return f"<s>{details}</s>̶"
+        return details
+
+
+@dataclasses.dataclass(frozen=True)
+class TelegramMessageResultRenderer:
+    detailed_renderer: TelegramDetailedResultRenderer = dataclasses.field(
+        default_factory=TelegramDetailedResultRenderer
+    )
+
+    def render(self, roll: results.BaseResult) -> str:
+        rendered = self.detailed_renderer.render(roll)
+        return "\n".join(f"<b>{item.value}</b>={item.details}" for item in rendered)
+
+
 @dataclasses.dataclass(frozen=True)
 class RollService:
-    renderer: dice_roller.DetailedResultRenderer
+    renderer: results.ResultRendererProtocol[str]
 
     def roll(self, raw_expression: str) -> str:
         expression = dice_roller.parse(raw_expression)
         result = expression.roll()
-        detailed_result = self.renderer.render(result)
-        result_items = (f"{item.details}={item.value}" for item in detailed_result)
-        return "\n".join(result_items)
+        return self.renderer.render(result)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -61,7 +78,7 @@ class MessageHandler(MessageHandlerProtocol):
             logger.exception("Error while processing roll expression: %s", raw_expression)
             await message.reply("Error while processing roll expression")
         else:
-            await message.reply(result)
+            await message.reply(result, parse_mode=aiogram.enums.ParseMode.HTML)
 
     async def _process_histogram(self, raw_expression: str, message: aiogram.types.Message) -> None:
         try:
@@ -114,7 +131,7 @@ class TelegramApp:
         aiogram_bot = aiogram.Bot(token=settings.token)
         aiogram_dispatcher = aiogram.Dispatcher()
 
-        roll_service = RollService(renderer=dice_roller.DetailedResultRenderer())
+        roll_service = RollService(renderer=TelegramMessageResultRenderer())
         histogram_service = HistogramService(renderer=dice_roller.PlotlyHistogramRenderer())
 
         message_handler = MessageHandler(roll_service=roll_service, histogram_service=histogram_service)

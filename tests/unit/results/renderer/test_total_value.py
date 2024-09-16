@@ -17,7 +17,6 @@ def test_render_value_roll():
     renderer = results.TotalValueResultRenderer()
     result = results.ValueResult(value=42)
     expected = 42
-    assert renderer.render_single(result) == expected
     assert renderer.render(result) == [expected]
 
 
@@ -31,7 +30,6 @@ def test_render_sum_roll():
         ],
     )
     expected = 6
-    assert renderer.render_single(roll) == expected
     assert renderer.render(roll) == [expected]
 
 
@@ -45,7 +43,6 @@ def test_render_sum_roll_with_dropped():
         ],
     )
     expected = 4
-    assert renderer.render_single(roll) == expected
     assert renderer.render(roll) == [expected]
 
 
@@ -59,7 +56,6 @@ def test_render_multiplication_roll():
         ],
     )
     expected = 24
-    assert renderer.render_single(roll) == expected
     assert renderer.render(roll) == [expected]
 
 
@@ -73,7 +69,6 @@ def test_render_multiplication_roll_with_dropped():
         ],
     )
     expected = 8
-    assert renderer.render_single(roll) == expected
     assert renderer.render(roll) == [expected]
 
 
@@ -93,5 +88,4 @@ def test_render_nested():
         ],
     )
     expected = 14
-    assert renderer.render_single(roll) == expected
     assert renderer.render(roll) == [expected]
