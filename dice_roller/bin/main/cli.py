@@ -21,8 +21,9 @@ def roll(raw_expression: str):
     detailed_renderer = dice_roller.DetailedRollResultRenderer()
     detailed_result = detailed_renderer.render(result)
 
-    click.echo(f"Details: {detailed_result.details}", err=True)
-    click.echo(detailed_result.value)
+    for item in detailed_result:
+        click.echo(f"Details: {item.details}", err=True)
+        click.echo(item.value)
 
 
 @main.command(name="histogram")

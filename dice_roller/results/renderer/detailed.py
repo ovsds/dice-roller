@@ -18,7 +18,18 @@ class DetailedRollResult:
     details: str
 
 
-class DetailedRollResultRenderer(base_result_renderer.BaseRollResultRenderer[DetailedRollResult]):
+class DetailedRollResultRenderer(
+    base_result_renderer.BaseRollResultRenderer[DetailedRollResult, list[DetailedRollResult]]
+):
+    def render(self, roll: result_models.BaseRollResult) -> list[DetailedRollResult]:
+        if isinstance(roll, result_models.MultiRollResult):
+            return [self.render_single(item) for item in roll.results]
+
+        if isinstance(roll, result_models.BaseSingleRollResult):
+            return [self.render_single(roll)]
+
+        return [self._unsupported(roll)]  # pragma: no cover
+
     def _render_value(self, roll: result_models.ValueRollResult) -> DetailedRollResult:
         return DetailedRollResult(value=roll.value, details=str(roll.value))
 
@@ -33,7 +44,7 @@ class DetailedRollResultRenderer(base_result_renderer.BaseRollResultRenderer[Det
         details: list[str] = []
 
         for item in roll.result_items:
-            rendered_item = self.render(item.result)
+            rendered_item = self.render_single(item.result)
 
             if item.dropped:
                 details.append(make_strikethrough(rendered_item.details))

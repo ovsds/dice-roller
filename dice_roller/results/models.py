@@ -6,14 +6,17 @@ import typing
 class BaseRollResult: ...
 
 
+class BaseSingleRollResult(BaseRollResult): ...
+
+
 @dataclasses.dataclass(frozen=True)
-class ValueRollResult(BaseRollResult):
+class ValueRollResult(BaseSingleRollResult):
     value: int
 
 
 @dataclasses.dataclass(frozen=True)
 class RollResultItem:
-    result: BaseRollResult
+    result: BaseSingleRollResult
     dropped: bool = False
 
     def __post_init__(self):
@@ -22,7 +25,7 @@ class RollResultItem:
 
 
 @dataclasses.dataclass(frozen=True)
-class BaseCollectionRollResult(abc.ABC, BaseRollResult):
+class BaseCollectionRollResult(abc.ABC, BaseSingleRollResult):
     result_items: typing.Sequence[RollResultItem]
 
     def __post_init__(self):
@@ -35,9 +38,16 @@ class SumRollResult(BaseCollectionRollResult): ...
 class MultiplicationRollResult(BaseCollectionRollResult): ...
 
 
+@dataclasses.dataclass(frozen=True)
+class MultiRollResult(BaseRollResult):
+    results: typing.Sequence[BaseSingleRollResult]
+
+
 __all__ = [
     "BaseCollectionRollResult",
     "BaseRollResult",
+    "BaseSingleRollResult",
+    "MultiRollResult",
     "MultiplicationRollResult",
     "RollResultItem",
     "SumRollResult",

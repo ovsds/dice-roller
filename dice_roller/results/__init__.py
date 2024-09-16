@@ -1,6 +1,8 @@
 from .models import (
     BaseRollResult,
+    BaseSingleRollResult,
     MultiplicationRollResult,
+    MultiRollResult,
     RollResultItem,
     SumRollResult,
     ValueRollResult,
@@ -13,8 +15,10 @@ from .renderer import (
 
 __all__ = [
     "BaseRollResult",
+    "BaseSingleRollResult",
     "DetailedRollResult",
     "DetailedRollResultRenderer",
+    "MultiRollResult",
     "MultiplicationRollResult",
     "RollResultItem",
     "SumRollResult",
