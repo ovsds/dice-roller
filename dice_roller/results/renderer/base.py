@@ -3,35 +3,39 @@ import typing
 
 import dice_roller.results.models as result_models
 
-RenderResultT = typing.TypeVar("RenderResultT")
+_SingleRenderResultT = typing.TypeVar("_SingleRenderResultT")
+_MultiRenderResultT = typing.TypeVar("_MultiRenderResultT")
 
 
-class BaseRollResultRenderer(typing.Generic[RenderResultT]):
-    def render(self, roll: result_models.BaseRollResult) -> RenderResultT:
-        if isinstance(roll, result_models.ValueRollResult):
-            return self.render_value_roll(roll)
+class BaseResultRenderer(typing.Generic[_SingleRenderResultT, _MultiRenderResultT]):
+    @abc.abstractmethod
+    def render(self, roll: result_models.BaseResult) -> _MultiRenderResultT: ...
 
-        if isinstance(roll, result_models.SumRollResult):
-            return self.render_sum_roll(roll)
+    def render_single(self, roll: result_models.BaseSingleResult) -> _SingleRenderResultT:
+        if isinstance(roll, result_models.ValueResult):
+            return self._render_value(roll)
 
-        if isinstance(roll, result_models.MultiplicationRollResult):
-            return self.render_multiplication_roll(roll)
+        if isinstance(roll, result_models.SumResult):
+            return self._render_sum(roll)
 
-        return self.unsupported(roll)  # pragma: no cover
+        if isinstance(roll, result_models.MultiplicationResult):
+            return self._render_multiplication(roll)
+
+        return self._unsupported(roll)  # pragma: no cover
 
     @abc.abstractmethod
-    def render_value_roll(self, roll: result_models.ValueRollResult) -> RenderResultT: ...
+    def _render_value(self, roll: result_models.ValueResult) -> _SingleRenderResultT: ...
 
     @abc.abstractmethod
-    def render_sum_roll(self, roll: result_models.SumRollResult) -> RenderResultT: ...
+    def _render_sum(self, roll: result_models.SumResult) -> _SingleRenderResultT: ...
 
     @abc.abstractmethod
-    def render_multiplication_roll(self, roll: result_models.MultiplicationRollResult) -> RenderResultT: ...
+    def _render_multiplication(self, roll: result_models.MultiplicationResult) -> _SingleRenderResultT: ...
 
-    def unsupported(self, roll: result_models.BaseRollResult) -> RenderResultT:
+    def _unsupported(self, roll: result_models.BaseResult) -> _SingleRenderResultT:
         raise NotImplementedError
 
 
 __all__ = [
-    "BaseRollResultRenderer",
+    "BaseResultRenderer",
 ]

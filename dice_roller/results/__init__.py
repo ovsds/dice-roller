@@ -1,23 +1,27 @@
 from .models import (
-    BaseRollResult,
-    MultiplicationRollResult,
-    RollResultItem,
-    SumRollResult,
-    ValueRollResult,
+    BaseResult,
+    BaseSingleResult,
+    MultiplicationResult,
+    MultiResult,
+    ResultItem,
+    SumResult,
+    ValueResult,
 )
 from .renderer import (
-    DetailedRollResult,
-    DetailedRollResultRenderer,
-    TotalValueRollResultRenderer,
+    DetailedResult,
+    DetailedResultRenderer,
+    TotalValueResultRenderer,
 )
 
 __all__ = [
-    "BaseRollResult",
-    "DetailedRollResult",
-    "DetailedRollResultRenderer",
-    "MultiplicationRollResult",
-    "RollResultItem",
-    "SumRollResult",
-    "TotalValueRollResultRenderer",
-    "ValueRollResult",
+    "BaseResult",
+    "BaseSingleResult",
+    "DetailedResult",
+    "DetailedResultRenderer",
+    "MultiResult",
+    "MultiplicationResult",
+    "ResultItem",
+    "SumResult",
+    "TotalValueResultRenderer",
+    "ValueResult",
 ]

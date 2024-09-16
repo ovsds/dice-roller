@@ -15,7 +15,7 @@ def test_roll():
     dice = dice_roller.DiceExpression(sides=20)
     roll = dice.roll()
 
-    assert roll == results.ValueRollResult(value=4)
+    assert roll == results.ValueResult(value=4)
 
 
 def test_get_histogram():

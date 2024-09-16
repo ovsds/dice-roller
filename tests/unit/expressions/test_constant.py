@@ -5,7 +5,7 @@ import dice_roller.results as results
 
 def test_roll():
     dice = dice_roller.ConstantExpression(value=3)
-    assert dice.roll() == results.ValueRollResult(value=3)
+    assert dice.roll() == results.ValueResult(value=3)
 
 
 def test_get_histogram():

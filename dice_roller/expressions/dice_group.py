@@ -35,7 +35,7 @@ class DiceGroupExpression:
             self.retain_highest > 0 and self.retain_lowest > 0
         ), "Only one of drop_highest, retain_highest, drop_lowest, retain_lowest can be used"
 
-    def _get_dropped_rolls(self, rolls: list[results.ValueRollResult]) -> dict[int, int]:
+    def _get_dropped_rolls(self, rolls: list[results.ValueResult]) -> dict[int, int]:
         if self.retain_highest + self.retain_lowest == 0:
             return {}
 
@@ -52,12 +52,12 @@ class DiceGroupExpression:
 
         return dropped_rolls
 
-    def roll(self) -> results.SumRollResult:
+    def roll(self) -> results.SumResult:
         roll_results = [self.dice.roll() for _ in range(self.count)]
 
         dropped_rolls = self._get_dropped_rolls(roll_results)
 
-        result_items: list[results.RollResultItem] = []
+        result_items: list[results.ResultItem] = []
 
         for result in roll_results:
             dropped = False
@@ -66,9 +66,9 @@ class DiceGroupExpression:
                 dropped_rolls[result.value] -= 1
                 dropped = True
 
-            result_items.append(results.RollResultItem(result=result, dropped=dropped))
+            result_items.append(results.ResultItem(result=result, dropped=dropped))
 
-        return results.SumRollResult(result_items=result_items)
+        return results.SumResult(result_items=result_items)
 
     def get_histogram(self) -> histograms.Histogram:
         return self.get_histogram_greedily()

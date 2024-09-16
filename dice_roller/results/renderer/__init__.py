@@ -1,8 +1,8 @@
-from .detailed import DetailedRollResult, DetailedRollResultRenderer
-from .total_value import TotalValueRollResultRenderer
+from .detailed import DetailedResult, DetailedResultRenderer
+from .total_value import TotalValueResultRenderer
 
 __all__ = [
-    "DetailedRollResult",
-    "DetailedRollResultRenderer",
-    "TotalValueRollResultRenderer",
+    "DetailedResult",
+    "DetailedResultRenderer",
+    "TotalValueResultRenderer",
 ]

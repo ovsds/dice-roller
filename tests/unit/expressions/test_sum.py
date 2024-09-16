@@ -21,11 +21,11 @@ def test_roll():
 
     roll = expression.roll()
 
-    assert roll == results.SumRollResult(
+    assert roll == results.SumResult(
         result_items=[
-            results.RollResultItem(result=results.ValueRollResult(value=1)),
-            results.RollResultItem(result=results.ValueRollResult(value=2)),
-            results.RollResultItem(result=results.ValueRollResult(value=3)),
+            results.ResultItem(result=results.ValueResult(value=1)),
+            results.ResultItem(result=results.ValueResult(value=2)),
+            results.ResultItem(result=results.ValueResult(value=3)),
         ]
     )
 

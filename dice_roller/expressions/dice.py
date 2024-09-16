@@ -12,8 +12,8 @@ class DiceExpression:
     def __post_init__(self):
         assert self.sides > 0, "Number of sides must be positive"
 
-    def roll(self) -> results.ValueRollResult:
-        return results.ValueRollResult(value=random.randint(1, self.sides))
+    def roll(self) -> results.ValueResult:
+        return results.ValueResult(value=random.randint(1, self.sides))
 
     def get_histogram(self) -> histograms.Histogram:
         return histograms.Histogram({i: 1 for i in range(1, self.sides + 1)})
