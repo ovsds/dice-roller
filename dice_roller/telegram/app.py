@@ -20,6 +20,9 @@ class TelegramAppSettings(pydantic_settings.BaseSettings):
     bot_short_description: str = "A simple dice roller bot"
     bot_description: str = "A simple dice roller bot"
 
+    image_width: int = 1280
+    image_height: int = 960
+
     class Config:
         env_prefix = "TELEGRAM_APP_"
 
@@ -130,9 +133,14 @@ class TelegramApp:
 
         aiogram_bot = aiogram.Bot(token=settings.token)
         aiogram_dispatcher = aiogram.Dispatcher()
+        result_renderer = TelegramMessageResultRenderer()
+        histogram_renderer = dice_roller.PlotlyHistogramRenderer(
+            width=settings.image_width,
+            height=settings.image_height,
+        )
 
-        roll_service = RollService(renderer=TelegramMessageResultRenderer())
-        histogram_service = HistogramService(renderer=dice_roller.PlotlyHistogramRenderer())
+        roll_service = RollService(renderer=result_renderer)
+        histogram_service = HistogramService(renderer=histogram_renderer)
 
         message_handler = MessageHandler(roll_service=roll_service, histogram_service=histogram_service)
 
