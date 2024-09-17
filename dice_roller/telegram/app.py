@@ -148,6 +148,8 @@ class MessageHandler(MessageHandlerProtocol):
         await message.reply(self.help_message, parse_mode=aiogram.enums.ParseMode.MARKDOWN_V2)
 
     async def process(self, message: aiogram.types.Message):
+        logger.info("Processing message: %s", message.text)
+
         if message.text is None:
             return
 
