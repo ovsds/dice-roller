@@ -151,7 +151,7 @@ class MessageHandler(MessageHandlerProtocol):
         if message.text is None:
             return
 
-        if message.text.startswith("/help"):
+        if message.text.startswith("/help") or message.text.startswith("/start"):
             return await self._process_help(message)
 
         if message.text.startswith("/roll"):
