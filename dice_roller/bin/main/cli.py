@@ -5,13 +5,16 @@ import click
 import dice_roller
 
 
-@click.group()
+@click.group(help="Dice roller CLI")
 def main():
     pass
 
 
-@main.command(name="roll")
-@click.argument("raw_expression", type=str)
+@main.command(
+    name="roll",
+    help="Rolls a dice expression",
+)
+@click.argument("raw_expression", type=str, required=True)
 def roll(raw_expression: str):
     click.echo(f"Rolling {raw_expression}...", err=True)
 
@@ -26,8 +29,11 @@ def roll(raw_expression: str):
         click.echo(item.value)
 
 
-@main.command(name="histogram")
-@click.argument("raw_expression", type=str)
+@main.command(
+    name="histogram",
+    help="Builds a histogram for a dice expression",
+)
+@click.argument("raw_expression", type=str, required=True)
 def histogram(raw_expression: str):
     click.echo(f"Building histogram for {raw_expression}...", err=True)
 
@@ -40,7 +46,10 @@ def histogram(raw_expression: str):
     click.echo(text_histogram)
 
 
-@main.command(name="telegram")
+@main.command(
+    name="telegram",
+    help="Starts the Telegram bot",
+)
 def telegram():
     click.echo("Starting Telegram bot...", err=True)
 
