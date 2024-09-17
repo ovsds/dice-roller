@@ -16,6 +16,7 @@ class DiceExpression:
         return results.ValueResult(value=random.randint(1, self.sides))
 
     def get_histogram(self) -> histograms.Histogram:
+        assert self.sides < histograms.HISTOGRAM_LIMIT, "Too many outcomes to calculate histogram"
         return histograms.Histogram({i: 1 for i in range(1, self.sides + 1)})
 
 

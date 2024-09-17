@@ -3,6 +3,9 @@ import typing
 
 import typing_extensions
 
+HISTOGRAM_LIMIT = 10_000
+HISTOGRAM_GREEDY_LIMIT = 1_000_000
+
 
 @dataclasses.dataclass(frozen=True)
 class Histogram:
@@ -14,6 +17,8 @@ class Histogram:
         operator: typing.Callable[[int, int], int],
     ) -> typing_extensions.Self:
         outcomes: dict[int, int] = {}
+
+        assert len(self.outcomes) * len(other.outcomes) < HISTOGRAM_LIMIT, "Too many outcomes to calculate histogram"
 
         for value, count in self.outcomes.items():
             for other_value, other_count in other.outcomes.items():
@@ -38,5 +43,7 @@ class Histogram:
 
 
 __all__ = [
+    "HISTOGRAM_GREEDY_LIMIT",
+    "HISTOGRAM_LIMIT",
     "Histogram",
 ]
