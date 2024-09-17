@@ -13,15 +13,62 @@ import dice_roller.results as results
 logger = logging.getLogger(__name__)
 
 
+def escape_characters(text: str, chars: list[str]) -> str:
+    for character in chars:
+        text = text.replace(character, f"\\{character}")
+
+    return text
+
+
 class TelegramAppSettings(pydantic_settings.BaseSettings):
     token: str = NotImplemented
 
     bot_name: str = "Dice Roller"
     bot_short_description: str = "A simple dice roller bot"
-    bot_description: str = "A simple dice roller bot"
 
     image_width: int = 1280
     image_height: int = 960
+
+    @property
+    def bot_commands(self) -> list[aiogram.types.BotCommand]:
+        return [
+            aiogram.types.BotCommand(command="help", description="Show help message"),
+            aiogram.types.BotCommand(command="roll", description="Roll a dice"),
+            aiogram.types.BotCommand(command="r", description="Roll a dice"),
+            aiogram.types.BotCommand(command="histogram", description="Build a histogram"),
+            aiogram.types.BotCommand(command="h", description="Build a histogram"),
+        ]
+
+    @property
+    def bot_description(self) -> str:
+        return (
+            "A simple dice roller bot that can roll dice expressions and build histograms for them.\n"
+            "Use /help to see the available commands\n"
+        )
+
+    @property
+    def help_message(self) -> str:
+        return escape_characters(
+            "Commands:\n"
+            "/help - Show this message\n"
+            "`/<expression>`(`/r<expression>`,`/roll <expression>`) - Roll a dice expression, example: /r4d6h3x6\n"
+            "`/h<expression>`(`/histogram <expression>`) - Build a histogram for a dice expression, example: /h4d6h3\n"
+            "\n"
+            "Dice expression:\n"
+            "`d` - Dice splitter, used to separate the number of dice and the number of sides, example: /4d6\n"
+            "`l` - Retain lowest, used to retain the lowest dice, example: /4d6l3\n"
+            "`h` - Retain highest, used to retain the highest dice, example: /4d6h3\n"
+            "\n"
+            "Operators:\n"
+            "`+` - Addition, example: `/4d6+3`\n"
+            "`*` - Multiplication, example: `/4d6*3`\n"
+            "\n"
+            "Multiexpression:\n"
+            "`x` - Repeated expression, used to repeat same expression multiple times, example: /4d6x3\n"
+            "\n"
+            "In case of any issues check the repo: https://github.com/ovsds/dice-roller",
+            ["<", ">", "(", ")", "-", "+", "*", "."],
+        )
 
     class Config:
         env_prefix = "TELEGRAM_APP_"
@@ -73,6 +120,7 @@ class HistogramService:
 class MessageHandler(MessageHandlerProtocol):
     roll_service: RollService
     histogram_service: HistogramService
+    help_message: str
 
     async def _process_roll(self, raw_expression: str, message: aiogram.types.Message) -> None:
         try:
@@ -96,9 +144,15 @@ class MessageHandler(MessageHandlerProtocol):
                 caption=f"Histogram for: {raw_expression}",
             )
 
+    async def _process_help(self, message: aiogram.types.Message) -> None:
+        await message.reply(self.help_message, parse_mode=aiogram.enums.ParseMode.MARKDOWN_V2)
+
     async def process(self, message: aiogram.types.Message):
         if message.text is None:
             return
+
+        if message.text.startswith("/help"):
+            return await self._process_help(message)
 
         if message.text.startswith("/roll"):
             raw_expression = message.text[5:].strip()
@@ -142,7 +196,11 @@ class TelegramApp:
         roll_service = RollService(renderer=result_renderer)
         histogram_service = HistogramService(renderer=histogram_renderer)
 
-        message_handler = MessageHandler(roll_service=roll_service, histogram_service=histogram_service)
+        message_handler = MessageHandler(
+            roll_service=roll_service,
+            histogram_service=histogram_service,
+            help_message=settings.help_message,
+        )
 
         aiogram_dispatcher.message.register(message_handler.process)
 
@@ -175,10 +233,7 @@ class TelegramApp:
             await self.aiogram_bot.set_my_short_description(self.settings.bot_short_description)
 
         commands = await self.aiogram_bot.get_my_commands()
-        expected_commands = [
-            aiogram.types.BotCommand(command="roll", description="Roll a dice"),
-            aiogram.types.BotCommand(command="histogram", description="Build a histogram"),
-        ]
+        expected_commands = self.settings.bot_commands
         if commands != expected_commands:
             await self.aiogram_bot.set_my_commands(expected_commands)
 
