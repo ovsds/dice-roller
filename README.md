@@ -4,6 +4,7 @@
 
 Dice Roller
 
+TEST
 
 ## Usage
 
