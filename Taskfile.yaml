@@ -67,17 +67,11 @@ tasks:
       - task: _with_nvm
         vars: { COMMAND: "npm run prepare" }
 
-      - echo 'Installing poetry version...'
-      - poetry self update {{.POETRY_TARGET_VERSION}}
-
       - echo 'Installing python dependencies...'
       - poetry install --with dev --all-extras
 
       - echo 'Installing .scripts dependencies...'
       - task: scripts:init
-    vars:
-      POETRY_TARGET_VERSION:
-        sh: cat .poetry-version
 
   lint:
     desc: Lint project
@@ -243,17 +237,27 @@ tasks:
       - echo 'Updating node dependencies...'
       - task: _with_nvm
         vars: { COMMAND: "npm update" }
+
+      - echo 'Updating python dependencies...'
+      - poetry update
+
+      - echo 'Updating .scripts dependencies...'
+      - task: scripts:dependencies-update
+
+  dependencies-check:
+    desc: Check dependencies
+    cmds:
+      - echo 'Checking node dependencies...'
       - task: _with_nvm
         vars: { COMMAND: "npm outdated" }
       - task: _with_nvm
         vars: { COMMAND: "npm audit" }
 
-      - echo 'Updating python dependencies...'
-      - poetry update
+      - echo 'Checking python dependencies...'
       - poetry show --outdated
 
-      - echo 'Updating .scripts dependencies...'
-      - task: scripts:dependencies-update
+      - echo 'Checking .scripts dependencies...'
+      - task: scripts:dependencies-check
 
   dev-server-start:
     desc: Start development application
@@ -282,10 +286,13 @@ tasks:
         --overwrite-if-exists
         --output-dir ../
         {{.TEMPLATE_PATH}}
-        project_name="Dice Roller"
-        project_slug="dice-roller"
-        node_version="v20.15.1"
-        github_owner="ovsds"
+        project_name='Dice Roller'
+        project_slug='dice-roller'
+        node_version='v20.15.1'
+        owner_name='Dmitry Ovsiannikov'
+        owner_github_login='ovsds'
+        scripts='true'
+        services=''
     vars:
       TEMPLATE_PATH: '{{.TEMPLATE_PATH | default "https://github.com/ovsds/template-repository"}}'
 
