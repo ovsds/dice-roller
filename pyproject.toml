@@ -21,7 +21,7 @@ exclude_lines = [
 include = ["dice_roller/*"]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = ["kaleido"]
+DEP002 = ["aiohttp", "kaleido"]
 
 [tool.isort]
 known_first_party = ["dice_roller", "tests"]
@@ -42,11 +42,12 @@ repository = "https://github.com/ovsds/dice-roller"
 version = "0.0.1"
 
 [tool.poetry.dependencies]
-aiogram = {optional = true, version = "^3.13.0"}
+aiogram = {optional = true, version = "^3.15.0"}
+aiohttp = "^3.10.5" # CVE-2024-52303
 click = "^8.1.7"
-kaleido = {optional = true, version = "0.2.1"}
+kaleido = {optional = true, version = "^0.2.1"} # optional plotly dependency
 plotly = {optional = true, version = "^5.24.1"}
-pydantic-settings = {optional = true, version = "^2.5.2"}
+pydantic-settings = {optional = true, version = "^2.6.1"}
 python = "~3.12"
 typing-extensions = "^4.12.2"
 
@@ -58,15 +59,15 @@ telegram = ["aiogram", "kaleido", "plotly", "pydantic-settings"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = "24.3.0"
-coverage = "7.4.4"
-deptry = "^0.18.0"
+black = "24.10.0"
+coverage = "7.6.8"
+deptry = "^0.21.1"
 pydantic-settings = "^2.5.2"
-pytest = "8.1.1"
+pytest = "8.3.3"
 pytest-mock = "3.14.0"
-ruff = "0.3.4"
-sort-all = "1.2.0"
-toml-sort = "0.23.1"
+ruff = "0.8.0"
+sort-all = "1.3.0"
+toml-sort = "0.24.2"
 
 [tool.poetry.scripts]
 dice-roller = "dice_roller.bin.main:main"
